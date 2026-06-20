@@ -30,7 +30,13 @@ class HeadlinesManager extends HTMLElement {
   get channelId() { return this.getAttribute('channel-id') || 'com.mimir.headlines'; }
   get apiBase()   { return `/api/channels/${this.channelId}`; }
 
-  connectedCallback() { this._load(); }
+  connectedCallback() {
+    // Add listeners once on the persistent shadowRoot — not inside _render()
+    this.shadowRoot.addEventListener('click',  e => this._handleClick(e));
+    this.shadowRoot.addEventListener('change', e => this._handleChange(e));
+    this.shadowRoot.addEventListener('input',  e => this._handleChange(e));
+    this._load();
+  }
 
   _blankForm() {
     return {
@@ -217,24 +223,20 @@ class HeadlinesManager extends HTMLElement {
     const s = this._state;
     const root = this.shadowRoot;
 
-    // Preserve focus
+    // Preserve focus by data-field (inputs have no stable id across rebuilds)
     const active = root.activeElement;
-    const focusId = active?.id;
-    const focusSel = active?.selectionStart;
-    const focusEnd = active?.selectionEnd;
+    const focusField = active?.dataset?.field;
+    const focusSel   = active?.selectionStart;
+    const focusEnd   = active?.selectionEnd;
 
     root.innerHTML = `<style>${this._css()}</style>${this._html()}`;
 
-    root.addEventListener('click',  e => this._handleClick(e));
-    root.addEventListener('change', e => this._handleChange(e));
-    root.addEventListener('input',  e => this._handleChange(e));
-
-    if (focusId) {
-      const el = root.getElementById(focusId);
+    if (focusField) {
+      const el = root.querySelector(`[data-field="${focusField}"]`);
       if (el) {
         el.focus();
-        if (focusSel !== undefined && el.setSelectionRange) {
-          try { el.setSelectionRange(focusSel, focusEnd); } catch(_) {}
+        if (focusSel !== null && focusSel !== undefined && el.setSelectionRange) {
+          try { el.setSelectionRange(focusSel, focusEnd); } catch (_) {}
         }
       }
     }
