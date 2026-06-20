@@ -49,6 +49,7 @@ class HeadlinesManager extends HTMLElement {
       article_index: 0,
       layout:       'auto',
       theme:        'dark',
+      body_size:    'md',
       show_image:   true,
       show_excerpt: true,
       show_author:  true,
@@ -430,10 +431,21 @@ class HeadlinesManager extends HTMLElement {
               <div class="field-group">
                 <label class="field-label">Theme</label>
                 <select class="form-select" data-field="theme">
-                  ${opt('dark',     'Dark',                     f.theme)}
-                  ${opt('light',    'Light (Newsprint)',         f.theme)}
-                  ${opt('hc-dark',  'High Contrast Dark (e-ink)',  f.theme)}
-                  ${opt('hc-light', 'High Contrast Light (e-ink)', f.theme)}
+                  ${opt('dark',     'Dark',                       f.theme)}
+                  ${opt('light',    'Light (Newsprint)',           f.theme)}
+                  ${opt('hc-dark',  'High Contrast Dark (e-ink)', f.theme)}
+                  ${opt('hc-light', 'High Contrast Light (e-ink)',f.theme)}
+                </select>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">Body Text Size</label>
+                <select class="form-select" data-field="body_size">
+                  ${opt('sm', 'Small',  f.body_size)}
+                  ${opt('md', 'Medium', f.body_size)}
+                  ${opt('lg', 'Large',  f.body_size)}
                 </select>
               </div>
             </div>

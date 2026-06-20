@@ -115,6 +115,7 @@ class HeadlinesHtmlRenderer:
             "image_uri": self._image_uri(image_bytes) if cfg.show_image else "",
             "theme":     cfg.theme,
             "layout":    self._layout_for(cfg, width, height),
+            "body_size": getattr(cfg, "body_size", "md"),
             "width":     width,
             "height":    height,
         }

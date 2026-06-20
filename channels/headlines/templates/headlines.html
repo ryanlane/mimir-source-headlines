@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-theme="{{ theme }}" data-layout="{{ layout }}">
+<html data-theme="{{ theme }}" data-layout="{{ layout }}" data-size="{{ body_size }}">
 <head>
 <meta charset="utf-8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +16,6 @@
   /* ── DESIGN TOKENS ── */
   :root {
     --bg:        #0d0b08;
-    --bg2:       #1a1610;
     --rule:      rgba(255,255,255,0.2);
     --border:    rgba(255,255,255,0.07);
     --text:      #ede5d5;
@@ -26,10 +25,12 @@
     --tag-bg:    rgba(201,168,108,0.12);
     --tag-text:  #c9a86c;
     --tag-border:#c9a86c;
+
+    /* Body copy size — overridden by data-size */
+    --body-size: clamp(0.8rem, 1.6vw, 0.95rem);
   }
   [data-theme="light"] {
     --bg:        #f2ece0;
-    --bg2:       #ffffff;
     --rule:      #9a8060;
     --border:    rgba(0,0,0,0.1);
     --text:      #120d06;
@@ -42,7 +43,6 @@
   }
   [data-theme="hc-dark"] {
     --bg:        #000000;
-    --bg2:       #111111;
     --rule:      #ffffff;
     --border:    rgba(255,255,255,0.5);
     --text:      #ffffff;
@@ -55,7 +55,6 @@
   }
   [data-theme="hc-light"] {
     --bg:        #ffffff;
-    --bg2:       #ebebeb;
     --rule:      #000000;
     --border:    rgba(0,0,0,0.5);
     --text:      #000000;
@@ -66,6 +65,11 @@
     --tag-text:  #000000;
     --tag-border:#000000;
   }
+
+  /* ── BODY COPY SIZE ── */
+  [data-size="sm"] { --body-size: clamp(0.62rem, 1.1vw, 0.76rem); }
+  [data-size="md"] { --body-size: clamp(0.80rem, 1.6vw, 0.95rem); }
+  [data-size="lg"] { --body-size: clamp(0.96rem, 2.1vw, 1.15rem); }
 
   body {
     background: var(--bg);
@@ -78,17 +82,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 9px 18px;
+    padding: clamp(6px, 1.2vh, 10px) clamp(14px, 2vw, 20px);
     border-bottom: 2px solid var(--rule);
     flex-shrink: 0;
     gap: 12px;
   }
   .cat-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
     font-family: system-ui, -apple-system, sans-serif;
-    font-size: 0.58rem;
+    font-size: clamp(0.5rem, 0.9vw, 0.62rem);
     font-weight: 800;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -100,7 +101,7 @@
   }
   .dateline {
     font-family: system-ui, -apple-system, sans-serif;
-    font-size: 0.57rem;
+    font-size: clamp(0.5rem, 0.85vw, 0.6rem);
     color: var(--dim);
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -119,11 +120,12 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    /* High clamp — the flex container's overflow:hidden is the real constraint */
+    -webkit-line-clamp: 12;
   }
-
   .byline {
     font-family: system-ui, -apple-system, sans-serif;
-    font-size: 0.6rem;
+    font-size: clamp(0.52rem, 0.95vw, 0.64rem);
     font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -132,145 +134,151 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 5px;
-  }
-  .byline-sep { color: var(--dim); }
-
-  .rule-line {
-    border: none;
-    border-top: 1px solid var(--border);
     flex-shrink: 0;
   }
+  .byline-sep { color: var(--dim); }
+  .rule-line  { border: none; border-top: 1px solid var(--border); flex-shrink: 0; }
 
+  /* Excerpt: grows to fill remaining space; clamp is a generous safety ceiling */
   .excerpt {
     font-family: Georgia, serif;
+    font-size: var(--body-size);
     color: var(--sub);
-    line-height: 1.6;
+    line-height: 1.65;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
-  }
-
-  .article-img {
-    object-fit: cover;
-    display: block;
-    flex-shrink: 0;
+    -webkit-line-clamp: 20;  /* container overflow:hidden is the real limiter */
+    flex: 1;                 /* grow to fill leftover space */
   }
 
   /* ══════════════════════════════════════════════
-     LANDSCAPE  (default: ~800×480)
-     Image left ·  text right  OR  full-width text
+     LANDSCAPE  — image LEFT, text RIGHT
+     Image column uses position:absolute inside
+     a flex-basis container so there's zero
+     ambiguity about its dimensions.
   ══════════════════════════════════════════════ */
   [data-layout="landscape"] .body {
     flex: 1;
     display: flex;
+    min-height: 0;
+    padding: clamp(12px, 2.2vw, 22px);
+    gap: clamp(12px, 2.2vw, 22px);
     overflow: hidden;
-    padding: clamp(16px, 2.8vw, 26px);
-    gap: clamp(16px, 2.8vw, 26px);
-    align-items: stretch;
   }
-  [data-layout="landscape"] .img-col { flex-shrink: 0; }
-  [data-layout="landscape"] .article-img {
-    width: clamp(160px, 31%, 250px);
+  /* Image column: explicit flex-basis, position:relative so child can fill it */
+  [data-layout="landscape"] .img-col {
+    flex: 0 0 clamp(140px, 30%, 260px);
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  [data-layout="landscape"] .img-col .article-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
     height: 100%;
-    border-radius: 3px;
+    object-fit: cover;
   }
   [data-layout="landscape"] .text-col {
     flex: 1;
     min-width: 0;
+    min-height: 0;
     display: flex;
     flex-direction: column;
-    gap: clamp(8px, 1.5vw, 14px);
-    justify-content: center;
+    gap: clamp(6px, 1.2vw, 12px);
+    overflow: hidden;
   }
   [data-layout="landscape"] .headline {
-    font-size: clamp(1.5rem, 4.5vw, 2.7rem);
-    -webkit-line-clamp: 3;
+    font-size: clamp(1.4rem, 4vw, 2.6rem);
+    flex-shrink: 0;
   }
-  [data-layout="landscape"] .excerpt {
-    font-size: clamp(0.8rem, 1.5vw, 0.96rem);
-    -webkit-line-clamp: 4;
-  }
-  /* Full-width layout when no image */
+  /* No-image variant: wider headline, more text */
   [data-layout="landscape"] .body.no-img .headline {
-    font-size: clamp(2rem, 5.5vw, 3.4rem);
-    -webkit-line-clamp: 4;
+    font-size: clamp(1.8rem, 5vw, 3.2rem);
   }
-  [data-layout="landscape"] .body.no-img .excerpt { -webkit-line-clamp: 6; }
 
   /* ══════════════════════════════════════════════
-     PORTRAIT  (~480×800)
-     Image top  ·  text below
+     PORTRAIT  — image TOP (fixed height), text fills rest
   ══════════════════════════════════════════════ */
   [data-layout="portrait"] .body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    min-height: 0;
+    padding: clamp(12px, 3vw, 20px);
+    gap: clamp(10px, 2vw, 16px);
     overflow: hidden;
-    padding: clamp(14px, 4vw, 22px);
-    gap: clamp(10px, 2.5vw, 16px);
   }
-  [data-layout="portrait"] .article-img {
+  [data-layout="portrait"] .img-wrap {
+    flex: 0 0 clamp(110px, 28%, 210px);
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  [data-layout="portrait"] .img-wrap .article-img {
+    position: absolute;
+    inset: 0;
     width: 100%;
-    height: clamp(110px, 26%, 190px);
-    border-radius: 3px;
+    height: 100%;
+    object-fit: cover;
   }
   [data-layout="portrait"] .text-col {
+    flex: 1;
+    min-height: 0;
     display: flex;
     flex-direction: column;
-    gap: clamp(8px, 2vw, 13px);
+    gap: clamp(6px, 1.5vw, 12px);
+    overflow: hidden;
   }
   [data-layout="portrait"] .headline {
-    font-size: clamp(1.4rem, 6.5vw, 2.4rem);
-    -webkit-line-clamp: 4;
-  }
-  [data-layout="portrait"] .excerpt {
-    font-size: clamp(0.78rem, 2.5vw, 0.92rem);
-    -webkit-line-clamp: 5;
+    font-size: clamp(1.3rem, 6vw, 2.4rem);
+    flex-shrink: 0;
   }
 
   /* ══════════════════════════════════════════════
-     SQUARE  (~600×600)
-     Image left  ·  text right  OR  full-width text
+     SQUARE  — image LEFT (40%), text RIGHT
   ══════════════════════════════════════════════ */
   [data-layout="square"] .body {
     flex: 1;
     display: flex;
+    min-height: 0;
+    padding: clamp(10px, 2vw, 18px);
+    gap: clamp(10px, 2vw, 18px);
     overflow: hidden;
-    padding: clamp(12px, 2.5vw, 20px);
-    gap: clamp(12px, 2.5vw, 18px);
   }
   [data-layout="square"] .img-col {
-    flex-shrink: 0;
-    width: 40%;
+    flex: 0 0 38%;
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
   }
-  [data-layout="square"] .article-img {
+  [data-layout="square"] .img-col .article-img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
-    border-radius: 3px;
+    object-fit: cover;
   }
   [data-layout="square"] .text-col {
     flex: 1;
     min-width: 0;
+    min-height: 0;
     display: flex;
     flex-direction: column;
-    gap: clamp(6px, 1.5vw, 10px);
+    gap: clamp(5px, 1.2vw, 10px);
+    overflow: hidden;
   }
   [data-layout="square"] .headline {
-    font-size: clamp(1.1rem, 3.5vw, 1.75rem);
-    -webkit-line-clamp: 6;
+    font-size: clamp(1rem, 3.2vw, 1.65rem);
+    flex-shrink: 0;
   }
-  [data-layout="square"] .excerpt {
-    font-size: clamp(0.65rem, 1.8vw, 0.82rem);
-    -webkit-line-clamp: 4;
-  }
+  /* No-image square: single column */
   [data-layout="square"] .body.no-img {
     flex-direction: column;
-    justify-content: center;
   }
-  [data-layout="square"] .body.no-img .text-col { flex: unset; }
   [data-layout="square"] .body.no-img .headline {
-    font-size: clamp(1.4rem, 4.5vw, 2.2rem);
-    -webkit-line-clamp: 5;
+    font-size: clamp(1.4rem, 4.5vw, 2.1rem);
   }
 </style>
 </head>
@@ -287,7 +295,9 @@
   {% if layout == "portrait" %}
   <div class="body">
     {% if image_uri %}
-    <img class="article-img" src="{{ image_uri }}" alt="">
+    <div class="img-wrap">
+      <img class="article-img" src="{{ image_uri }}" alt="">
+    </div>
     {% endif %}
     <div class="text-col">
       <div class="headline">{{ headline }}</div>
@@ -300,10 +310,7 @@
         {% if time_ago %}<span>{{ time_ago }}</span>{% endif %}
       </div>
       {% endif %}
-      {% if excerpt %}
-      <hr class="rule-line">
-      <div class="excerpt">{{ excerpt }}</div>
-      {% endif %}
+      {% if excerpt %}<hr class="rule-line"><div class="excerpt">{{ excerpt }}</div>{% endif %}
     </div>
   </div>
 
@@ -326,10 +333,7 @@
         {% if time_ago %}<span>{{ time_ago }}</span>{% endif %}
       </div>
       {% endif %}
-      {% if excerpt %}
-      <hr class="rule-line">
-      <div class="excerpt">{{ excerpt }}</div>
-      {% endif %}
+      {% if excerpt %}<hr class="rule-line"><div class="excerpt">{{ excerpt }}</div>{% endif %}
     </div>
   </div>
   {% endif %}

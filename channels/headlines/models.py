@@ -23,6 +23,7 @@ class HeadlinesFeed:
     # Display
     layout: str = "auto"          # auto | landscape | portrait | square
     theme: str = "dark"           # dark | light | hc-dark | hc-light
+    body_size: str = "md"         # sm | md | lg
     # Content toggles
     show_image: bool = True
     show_excerpt: bool = True
