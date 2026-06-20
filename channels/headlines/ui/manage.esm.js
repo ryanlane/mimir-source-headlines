@@ -49,7 +49,8 @@ class HeadlinesManager extends HTMLElement {
       article_index: 0,
       layout:       'auto',
       theme:        'dark',
-      body_size:    'md',
+      body_size:     'md',
+      excerpt_field: 'description',
       show_image:   true,
       show_excerpt: true,
       show_author:  true,
@@ -452,6 +453,15 @@ class HeadlinesManager extends HTMLElement {
 
             <div class="divider"></div>
             <div class="field-label" style="margin-bottom:6px">Content</div>
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">Excerpt Source</label>
+                <select class="form-select" data-field="excerpt_field">
+                  ${opt('description', 'Description (free tier)',    f.excerpt_field)}
+                  ${opt('content',     'Full Content (paid tier)', f.excerpt_field)}
+                </select>
+              </div>
+            </div>
             <div class="toggles-grid">
               ${tog('show_image',   'Show Article Image')}
               ${tog('show_excerpt', 'Show Excerpt')}

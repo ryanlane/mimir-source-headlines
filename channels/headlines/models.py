@@ -25,6 +25,7 @@ class HeadlinesFeed:
     theme: str = "dark"           # dark | light | hc-dark | hc-light
     body_size: str = "md"         # sm | md | lg
     # Content toggles
+    excerpt_field: str = "description"  # description | content
     show_image: bool = True
     show_excerpt: bool = True
     show_author: bool = True

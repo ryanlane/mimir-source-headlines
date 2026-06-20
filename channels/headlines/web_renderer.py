@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import base64
 import logging
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -104,9 +105,14 @@ class HeadlinesHtmlRenderer:
         if len(author) > 40:
             author = author[:40] + "…"
 
+        excerpt_field = getattr(cfg, "excerpt_field", "description")
+        raw_excerpt = article.get(excerpt_field) or article.get("description") or ""
+        # NewsAPI free tier appends "[+NNNN chars]" to the content field — strip it
+        raw_excerpt = re.sub(r'\s*\[\+\d+ chars\]\s*$', '', raw_excerpt).strip()
+
         return {
             "headline":  article.get("title", ""),
-            "excerpt":   article.get("description", "") if cfg.show_excerpt else "",
+            "excerpt":   raw_excerpt if cfg.show_excerpt else "",
             "author":    author if cfg.show_author else "",
             "source":    (article.get("source") or {}).get("name", "") if cfg.show_source else "",
             "time_ago":  _time_ago(published_at) if cfg.show_time else "",
