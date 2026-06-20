@@ -407,14 +407,6 @@ class HeadlinesManager extends HTMLElement {
                   ${opt('relevancy',   'Most Relevant', f.sort_by)}
                 </select>
               </div>
-              <div class="field-group">
-                <label class="field-label">
-                  Article # to Show
-                  <span class="field-hint">(0 = top)</span>
-                </label>
-                <input class="form-input" type="number" min="0" max="9" step="1"
-                  data-field="article_index" value="${f.article_index}">
-              </div>
             </div>
 
             <div class="divider"></div>

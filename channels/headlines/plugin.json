@@ -2,7 +2,7 @@
   "id": "com.mimir.headlines",
   "name": "Headlines",
   "description": "Displays live news headlines from NewsAPI. Each configured feed targets a category, keyword, or country — assign different feeds to different screens.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "embedded",
   "entry_point": "channel.py",
   "class_name": "HeadlinesChannel",

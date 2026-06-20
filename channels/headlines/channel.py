@@ -50,12 +50,31 @@ class HeadlinesChannel:
         self.cache = HeadlineCache(self.data_dir / "headline_cache.json")
         self.renderer = HeadlinesHtmlRenderer()
         self.last_error: Optional[str] = None
+        self._rotation: Dict[str, int] = self._load_rotation()
 
         logger.info("[Headlines] Initialized at %s, %d feeds", self.channel_dir, len(self.store.all()))
 
     @property
     def id(self) -> str:
         return self._meta.get("id", "com.mimir.headlines")
+
+    # ------------------------------------------------------------------
+    # Rotation state
+
+    def _rotation_path(self) -> Path:
+        return self.data_dir / "rotation_state.json"
+
+    def _load_rotation(self) -> Dict[str, int]:
+        p = self._rotation_path()
+        if p.exists():
+            try:
+                return json.loads(p.read_text())
+            except Exception:
+                pass
+        return {}
+
+    def _save_rotation(self) -> None:
+        self._rotation_path().write_text(json.dumps(self._rotation, indent=2))
 
     # ------------------------------------------------------------------
     # Settings
@@ -130,8 +149,11 @@ class HeadlinesChannel:
         if not articles:
             raise ValueError("No articles returned for this feed")
 
-        idx = min(feed.article_index, len(articles) - 1)
-        article = articles[idx]
+        current = self._rotation.get(feed.id, 0) % len(articles)
+        self._rotation[feed.id] = (current + 1) % len(articles)
+        self._save_rotation()
+
+        article = articles[current]
 
         image_bytes = await self._get_image(article, feed)
         return await self.renderer.render(article, feed, width, height, image_bytes)
