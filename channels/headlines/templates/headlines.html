@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html data-theme="{{ theme }}" data-layout="{{ layout }}">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: {{ width }}px;
+    height: {{ height }}px;
+    overflow: hidden;
+  }
+
+  /* ── DESIGN TOKENS ── */
+  :root {
+    --bg:        #0d0b08;
+    --bg2:       #1a1610;
+    --rule:      rgba(255,255,255,0.2);
+    --border:    rgba(255,255,255,0.07);
+    --text:      #ede5d5;
+    --sub:       #857464;
+    --dim:       #5a4e40;
+    --accent:    #c9a86c;
+    --tag-bg:    rgba(201,168,108,0.12);
+    --tag-text:  #c9a86c;
+    --tag-border:#c9a86c;
+  }
+  [data-theme="light"] {
+    --bg:        #f2ece0;
+    --bg2:       #ffffff;
+    --rule:      #9a8060;
+    --border:    rgba(0,0,0,0.1);
+    --text:      #120d06;
+    --sub:       #5c4b38;
+    --dim:       #9a8060;
+    --accent:    #8b1a1a;
+    --tag-bg:    rgba(139,26,26,0.08);
+    --tag-text:  #8b1a1a;
+    --tag-border:#8b1a1a;
+  }
+  [data-theme="hc-dark"] {
+    --bg:        #000000;
+    --bg2:       #111111;
+    --rule:      #ffffff;
+    --border:    rgba(255,255,255,0.5);
+    --text:      #ffffff;
+    --sub:       #cccccc;
+    --dim:       #999999;
+    --accent:    #ffffff;
+    --tag-bg:    rgba(255,255,255,0.08);
+    --tag-text:  #ffffff;
+    --tag-border:#ffffff;
+  }
+  [data-theme="hc-light"] {
+    --bg:        #ffffff;
+    --bg2:       #ebebeb;
+    --rule:      #000000;
+    --border:    rgba(0,0,0,0.5);
+    --text:      #000000;
+    --sub:       #333333;
+    --dim:       #666666;
+    --accent:    #000000;
+    --tag-bg:    rgba(0,0,0,0.06);
+    --tag-text:  #000000;
+    --tag-border:#000000;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: Georgia, "Times New Roman", serif;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 18px;
+    border-bottom: 2px solid var(--rule);
+    flex-shrink: 0;
+    gap: 12px;
+  }
+  .cat-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 0.58rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--tag-text);
+    background: var(--tag-bg);
+    border: 1px solid var(--tag-border);
+    padding: 3px 9px;
+    white-space: nowrap;
+  }
+  .dateline {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 0.57rem;
+    color: var(--dim);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* ── SHARED CONTENT ELEMENTS ── */
+  .wrap { display: flex; flex-direction: column; height: 100%; }
+
+  .headline {
+    font-family: "Playfair Display", "Palatino Linotype", Palatino, Georgia, serif;
+    font-weight: 900;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .byline {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--sub);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+  }
+  .byline-sep { color: var(--dim); }
+
+  .rule-line {
+    border: none;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .excerpt {
+    font-family: Georgia, serif;
+    color: var(--sub);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .article-img {
+    object-fit: cover;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  /* ══════════════════════════════════════════════
+     LANDSCAPE  (default: ~800×480)
+     Image left ·  text right  OR  full-width text
+  ══════════════════════════════════════════════ */
+  [data-layout="landscape"] .body {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    padding: clamp(16px, 2.8vw, 26px);
+    gap: clamp(16px, 2.8vw, 26px);
+    align-items: stretch;
+  }
+  [data-layout="landscape"] .img-col { flex-shrink: 0; }
+  [data-layout="landscape"] .article-img {
+    width: clamp(160px, 31%, 250px);
+    height: 100%;
+    border-radius: 3px;
+  }
+  [data-layout="landscape"] .text-col {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(8px, 1.5vw, 14px);
+    justify-content: center;
+  }
+  [data-layout="landscape"] .headline {
+    font-size: clamp(1.5rem, 4.5vw, 2.7rem);
+    -webkit-line-clamp: 3;
+  }
+  [data-layout="landscape"] .excerpt {
+    font-size: clamp(0.8rem, 1.5vw, 0.96rem);
+    -webkit-line-clamp: 4;
+  }
+  /* Full-width layout when no image */
+  [data-layout="landscape"] .body.no-img .headline {
+    font-size: clamp(2rem, 5.5vw, 3.4rem);
+    -webkit-line-clamp: 4;
+  }
+  [data-layout="landscape"] .body.no-img .excerpt { -webkit-line-clamp: 6; }
+
+  /* ══════════════════════════════════════════════
+     PORTRAIT  (~480×800)
+     Image top  ·  text below
+  ══════════════════════════════════════════════ */
+  [data-layout="portrait"] .body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: clamp(14px, 4vw, 22px);
+    gap: clamp(10px, 2.5vw, 16px);
+  }
+  [data-layout="portrait"] .article-img {
+    width: 100%;
+    height: clamp(110px, 26%, 190px);
+    border-radius: 3px;
+  }
+  [data-layout="portrait"] .text-col {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(8px, 2vw, 13px);
+  }
+  [data-layout="portrait"] .headline {
+    font-size: clamp(1.4rem, 6.5vw, 2.4rem);
+    -webkit-line-clamp: 4;
+  }
+  [data-layout="portrait"] .excerpt {
+    font-size: clamp(0.78rem, 2.5vw, 0.92rem);
+    -webkit-line-clamp: 5;
+  }
+
+  /* ══════════════════════════════════════════════
+     SQUARE  (~600×600)
+     Image left  ·  text right  OR  full-width text
+  ══════════════════════════════════════════════ */
+  [data-layout="square"] .body {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    padding: clamp(12px, 2.5vw, 20px);
+    gap: clamp(12px, 2.5vw, 18px);
+  }
+  [data-layout="square"] .img-col {
+    flex-shrink: 0;
+    width: 40%;
+  }
+  [data-layout="square"] .article-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 3px;
+  }
+  [data-layout="square"] .text-col {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(6px, 1.5vw, 10px);
+  }
+  [data-layout="square"] .headline {
+    font-size: clamp(1.1rem, 3.5vw, 1.75rem);
+    -webkit-line-clamp: 6;
+  }
+  [data-layout="square"] .excerpt {
+    font-size: clamp(0.65rem, 1.8vw, 0.82rem);
+    -webkit-line-clamp: 4;
+  }
+  [data-layout="square"] .body.no-img {
+    flex-direction: column;
+    justify-content: center;
+  }
+  [data-layout="square"] .body.no-img .text-col { flex: unset; }
+  [data-layout="square"] .body.no-img .headline {
+    font-size: clamp(1.4rem, 4.5vw, 2.2rem);
+    -webkit-line-clamp: 5;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- MASTHEAD: category tag + dateline -->
+  <div class="masthead">
+    <span class="cat-tag">{{ category }}</span>
+    <span class="dateline">{{ date }}</span>
+  </div>
+
+  <!-- ─── PORTRAIT: stacked (image → text) ─── -->
+  {% if layout == "portrait" %}
+  <div class="body">
+    {% if image_uri %}
+    <img class="article-img" src="{{ image_uri }}" alt="">
+    {% endif %}
+    <div class="text-col">
+      <div class="headline">{{ headline }}</div>
+      {% if author or source or time_ago %}
+      <div class="byline">
+        {% if author %}<span>{{ author }}</span>{% endif %}
+        {% if author and (source or time_ago) %}<span class="byline-sep">·</span>{% endif %}
+        {% if source %}<span>{{ source }}</span>{% endif %}
+        {% if source and time_ago %}<span class="byline-sep">·</span>{% endif %}
+        {% if time_ago %}<span>{{ time_ago }}</span>{% endif %}
+      </div>
+      {% endif %}
+      {% if excerpt %}
+      <hr class="rule-line">
+      <div class="excerpt">{{ excerpt }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ─── LANDSCAPE / SQUARE: side-by-side (image | text) ─── -->
+  {% else %}
+  <div class="body{{ '' if image_uri else ' no-img' }}">
+    {% if image_uri %}
+    <div class="img-col">
+      <img class="article-img" src="{{ image_uri }}" alt="">
+    </div>
+    {% endif %}
+    <div class="text-col">
+      <div class="headline">{{ headline }}</div>
+      {% if author or source or time_ago %}
+      <div class="byline">
+        {% if author %}<span>{{ author }}</span>{% endif %}
+        {% if author and (source or time_ago) %}<span class="byline-sep">·</span>{% endif %}
+        {% if source %}<span>{{ source }}</span>{% endif %}
+        {% if source and time_ago %}<span class="byline-sep">·</span>{% endif %}
+        {% if time_ago %}<span>{{ time_ago }}</span>{% endif %}
+      </div>
+      {% endif %}
+      {% if excerpt %}
+      <hr class="rule-line">
+      <div class="excerpt">{{ excerpt }}</div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+</body>
+</html>
