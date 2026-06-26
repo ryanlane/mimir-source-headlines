@@ -1,8 +1,8 @@
 {
   "id": "com.mimir.headlines",
   "name": "Headlines",
-  "description": "Displays live news headlines from NewsAPI. Each configured feed targets a category, keyword, or country — assign different feeds to different screens.",
-  "version": "1.2.0",
+  "description": "Displays live news headlines from NewsAPI. Each configured feed targets a category, keyword, or country \u2014 assign different feeds to different screens.",
+  "version": "1.2.1",
   "type": "embedded",
   "entry_point": "channel.py",
   "class_name": "HeadlinesChannel",
@@ -65,18 +65,70 @@
     }
   },
   "endpoints": [
-    { "path": "/manifest",              "method": "GET",    "description": "Channel manifest" },
-    { "path": "/subchannels",           "method": "GET",    "description": "List configured feeds" },
-    { "path": "/subchannels",           "method": "POST",   "description": "Create a new feed" },
-    { "path": "/subchannels/{id}",      "method": "GET",    "description": "Get a feed config" },
-    { "path": "/subchannels/{id}",      "method": "PUT",    "description": "Update a feed config" },
-    { "path": "/subchannels/{id}",      "method": "DELETE", "description": "Delete a feed" },
-    { "path": "/subchannels/{id}/preview", "method": "GET", "description": "Render a preview image" },
-    { "path": "/preview",               "method": "POST",   "description": "Render a preview from an unsaved config" },
-    { "path": "/request-image",         "method": "POST",   "description": "Render headline image at display resolution" },
-    { "path": "/settings",              "method": "GET",    "description": "Get settings" },
-    { "path": "/settings",              "method": "PUT",    "description": "Update settings" },
-    { "path": "/status",                "method": "GET",    "description": "Health and cache status" },
-    { "path": "/validate-key",          "method": "POST",   "description": "Validate a NewsAPI key" }
+    {
+      "path": "/manifest",
+      "method": "GET",
+      "description": "Channel manifest"
+    },
+    {
+      "path": "/subchannels",
+      "method": "GET",
+      "description": "List configured feeds"
+    },
+    {
+      "path": "/subchannels",
+      "method": "POST",
+      "description": "Create a new feed"
+    },
+    {
+      "path": "/subchannels/{id}",
+      "method": "GET",
+      "description": "Get a feed config"
+    },
+    {
+      "path": "/subchannels/{id}",
+      "method": "PUT",
+      "description": "Update a feed config"
+    },
+    {
+      "path": "/subchannels/{id}",
+      "method": "DELETE",
+      "description": "Delete a feed"
+    },
+    {
+      "path": "/subchannels/{id}/preview",
+      "method": "GET",
+      "description": "Render a preview image"
+    },
+    {
+      "path": "/preview",
+      "method": "POST",
+      "description": "Render a preview from an unsaved config"
+    },
+    {
+      "path": "/request-image",
+      "method": "POST",
+      "description": "Render headline image at display resolution"
+    },
+    {
+      "path": "/settings",
+      "method": "GET",
+      "description": "Get settings"
+    },
+    {
+      "path": "/settings",
+      "method": "PUT",
+      "description": "Update settings"
+    },
+    {
+      "path": "/status",
+      "method": "GET",
+      "description": "Health and cache status"
+    },
+    {
+      "path": "/validate-key",
+      "method": "POST",
+      "description": "Validate a NewsAPI key"
+    }
   ]
 }

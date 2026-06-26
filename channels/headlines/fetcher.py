@@ -11,6 +11,8 @@ from typing import Any, Dict, List, Optional
 
 import requests
 
+from .mimir_utils import validate_key_nonempty
+
 _BASE = "https://newsapi.org/v2"
 _TIMEOUT = 10
 
@@ -19,6 +21,9 @@ logger = logging.getLogger("mimir.channels.headlines.fetcher")
 
 def validate_api_key(api_key: str) -> Dict[str, Any]:
     """Test the API key with a minimal request."""
+    result = validate_key_nonempty(api_key)
+    if not result["valid"]:
+        return result
     try:
         r = requests.get(
             f"{_BASE}/top-headlines",
